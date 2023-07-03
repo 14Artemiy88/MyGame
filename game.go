@@ -194,7 +194,8 @@ func (g game) NewGameScreen() {
 	drawByCenter("↑ - Jump", g.maxX, g.maxY/2-4)
 	drawByCenter("→ - Right", g.maxX, g.maxY/2-3)
 	drawByCenter("← - Left", g.maxX, g.maxY/2-2)
-	drawByCenter("Press SPACE to start\n", g.maxX, g.maxY/2)
+	drawByCenter("↓ - piu-piu", g.maxX, g.maxY/2-1)
+	drawByCenter("Press SPACE to start\n", g.maxX, g.maxY/2+1)
 
 	render()
 }

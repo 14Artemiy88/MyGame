@@ -35,10 +35,13 @@ func (g *game) draw(isDead bool) {
 	moveCursor(position{statusXPos, 0})
 	draw(status)
 
-	for _, c := range g.cactus {
-		c.draw()
+	for _, cactus := range g.cactus {
+		cactus.draw()
 	}
 	g.man.draw(isDead)
+	for _, piu := range g.man.piu {
+		piu.draw()
+	}
 
 	render()
 	time.Sleep(time.Millisecond * g.speed)
@@ -73,8 +76,8 @@ func (g *game) listenForKeyPress() {
 			g.started = true
 		case 'A':
 			g.man.direction = up
-		//case 'B':
-		//	g.man.direction = down
+		case 'B':
+			g.man.piuPiu()
 		case 'C':
 			g.man.direction = right
 		case 'D':

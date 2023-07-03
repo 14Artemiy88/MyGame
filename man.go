@@ -5,6 +5,7 @@ type man struct {
 	direction     direction
 	jumpIteration int
 	foots         string
+	piu           []*piu
 }
 
 const jumpHeight = 7
@@ -17,79 +18,89 @@ var manLeft = fgRgb(200, 200, 0, "⡎⡇")
 var manRight = fgRgb(200, 200, 0, "⢸⢱")
 var steps = [3]string{manLeft, manRight}
 
-func (d man) draw(isDead bool) {
+func (m man) draw(isDead bool) {
 	if isDead {
-		d.drawDeadman()
+		m.drawDeadman()
 	} else {
-		moveCursor(d.position)
-		draw(fgRgb(200, 200, 0, d.foots))
-		moveCursor([2]int{d.position[0], d.position[1] - 1})
+		moveCursor(m.position)
+		draw(fgRgb(200, 200, 0, m.foots))
+		moveCursor([2]int{m.position[0], m.position[1] - 1})
 		draw(manBody)
-		moveCursor([2]int{d.position[0], d.position[1] - 2})
+		moveCursor([2]int{m.position[0], m.position[1] - 2})
 		draw(manHead)
 	}
 }
 
-func (d man) drawDeadman() {
-	moveCursor(d.position)
-	draw(fgRgb(200, 0, 0, d.foots))
-	moveCursor([2]int{d.position[0], d.position[1] - 1})
+func (m man) drawDeadman() {
+	moveCursor(m.position)
+	draw(fgRgb(200, 0, 0, m.foots))
+	moveCursor([2]int{m.position[0], m.position[1] - 1})
 	draw(fgRgb(200, 0, 0, "⢺⡗"))
-	moveCursor([2]int{d.position[0], d.position[1] - 2})
+	moveCursor([2]int{m.position[0], m.position[1] - 2})
 	draw(fgRgb(200, 0, 0, "⢠⡄"))
 }
 
-func (d *man) move(maxX int, maxY int, step bool) {
+func (m *man) move(maxX int, maxY int, step bool) {
 	if step {
-		d.foots = steps[1]
+		m.foots = steps[1]
 	} else {
-		d.foots = steps[0]
+		m.foots = steps[0]
 	}
-	if d.direction == up && d.jumpIteration < jumpHeight {
-		d.foots = manJump
-		d.moveUp()
-		d.jumpIteration++
-		if d.jumpIteration == jumpHeight {
-			d.direction = down
+	if m.direction == up && m.jumpIteration < jumpHeight {
+		m.foots = manJump
+		m.moveUp()
+		m.jumpIteration++
+		if m.jumpIteration == jumpHeight {
+			m.direction = down
 		}
 	}
-	if d.direction == down && d.position[1] < maxY {
-		d.foots = manJump
-		d.moveDown(maxY)
-		d.jumpIteration--
-		if d.position[1] == maxY {
-			d.direction = stay
+	if m.direction == down && m.position[1] < maxY {
+		m.foots = manJump
+		m.moveDown(maxY)
+		m.jumpIteration--
+		if m.position[1] == maxY {
+			m.direction = stay
 		}
 	}
-	if d.direction == left {
-		d.moveLeft()
-		d.direction = stay
+	if m.direction == left {
+		m.moveLeft()
+		m.direction = stay
 	}
-	if d.direction == right {
-		d.moveRight(maxX)
-		d.direction = stay
-	}
-}
-func (d *man) moveUp() {
-	d.position[1]--
-}
-func (d *man) moveDown(maxY int) {
-	if d.position[1] < maxY {
-		d.position[1]++
+	if m.direction == right {
+		m.moveRight(maxX)
+		m.direction = stay
 	}
 }
-func (d *man) moveRight(maxX int) {
-	if d.position[0] < maxX {
-		d.position[0]++
+func (m *man) moveUp() {
+	m.position[1]--
+}
+func (m *man) moveDown(maxY int) {
+	if m.position[1] < maxY {
+		m.position[1]++
 	}
 }
-func (d *man) moveLeft() {
-	if d.position[0] > 0 {
-		d.position[0]--
+func (m *man) moveRight(maxX int) {
+	if m.position[0] < maxX {
+		m.position[0]++
+	}
+}
+func (m *man) moveLeft() {
+	if m.position[0] > 0 {
+		m.position[0]--
 	}
 }
 
-func (d man) checkAssOnCactus(c *cactus) bool {
-	return d.position[0] == c.position[0] &&
-		d.position[1] >= c.position[1]-c.height
+func (m man) checkAssOnCactus(c *cactus) bool {
+	return m.position[0] == c.position[0] &&
+		m.position[1] >= c.position[1]-c.height
+}
+
+func (m *man) piuPiu() {
+	m.piu = append(m.piu, &piu{position: [2]int{m.position[0] + 1, m.position[1] - 1}})
+}
+
+func (m *man) delPiu(key int) {
+	// Remove the element at index i from a.
+	m.piu[key] = m.piu[len(m.piu)-1] // Copy last element to index i.
+	m.piu = m.piu[:len(m.piu)-1]     // Truncate slice.
 }

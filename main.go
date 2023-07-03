@@ -37,15 +37,22 @@ func main() {
 			step = !step
 		}
 		game.man.move(game.maxX, game.maxY, step)
+		for key, piu := range game.man.piu {
+			piu.move()
+			needDelete := piu.checkCactus(game.cactus)
+			if needDelete || piu.position[0] > game.maxX {
+				game.man.delPiu(key)
+			}
+		}
 
-		for _, c := range game.cactus {
-			if game.man.checkAssOnCactus(c) {
+		for _, cactus := range game.cactus {
+			if game.man.checkAssOnCactus(cactus) {
 				game.draw(true)
 				time.Sleep(time.Millisecond * 1000)
 				game.over()
 			}
-			c.move()
-			if c.checkHide() {
+			cactus.move()
+			if cactus.checkHide() {
 				game.cactus = game.cactus[1:]
 				game.score++
 				game.checkScore()

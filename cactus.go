@@ -1,11 +1,5 @@
 package main
 
-/*
-┃┃
-┗┫┃ ┗┫
-
-	┣┛  ┣┛ ┗┫
-*/
 type cactus struct {
 	position position
 	stages   []string

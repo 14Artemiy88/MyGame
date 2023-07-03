@@ -35,7 +35,7 @@ func fgRgb(r int, g int, b int, symbol string) string {
 	return "\033[38;2;" + strconv.Itoa(r) + ";" + strconv.Itoa(g) + ";" + strconv.Itoa(b) + "m" + symbol + "\033[0m"
 }
 
-func draw(str string) {
+func draw(str any) {
 	fmt.Fprint(screen, str)
 }
 

@@ -31,7 +31,6 @@ func (g *game) draw() {
 
 	status := "score: " + strconv.Itoa(g.score)
 	statusXPos := g.maxX/2 - len(status)/2
-
 	moveCursor(position{statusXPos, 0})
 	draw(status)
 
@@ -64,9 +63,7 @@ func (g *game) listenForKeyPress() {
 		// we ignore the escape character [
 		switch char {
 		case ' ':
-			if !g.started {
-				g.started = true
-			}
+			g.started = !g.started
 		case 'A':
 			g.dino.direction = up
 		case 'B':
@@ -102,29 +99,43 @@ func (g *game) over() {
 	showCursor()
 	clear()
 
-	var GOStr string
-	GOStr = "     ####   ####  ##   ## #####     ####  ##  ## ##### #####      "
-	GOPosX := g.maxX/2 - len(GOStr)/2
+	GOStr := [5]string{
+		"     ####   ####  ##   ## #####     ####  ##  ## ##### #####      ",
+		"    ##     ##  ## ### ### ##       ##  ## ##  ## ##    ##  ##     ",
+		fmt.Sprintf("%v  ## ### ###### ## # ## ####     ##  ## ##  ## ####  #####      %v", manFoot, cactusSeg),
+		fmt.Sprintf("%v  ##  ## ##  ## ##   ## ##       ##  ##  ####  ##    ##  ##  %v  %v", manBody, cactusSeg, cactusSeg),
+		fmt.Sprintf("%v   ####  ##  ## ##   ## #####     ####    ##   ##### ##  ##  %v  %v  %v", manFoot, cactusSeg, cactusSeg, cactusSeg),
+	}
+	GOPosX := g.maxX/2 - len(GOStr[0])/2
 	GOPosY := g.maxY / 2
-	moveCursor(position{GOPosX, GOPosY - 10})
-	draw(GOStr)
-	GOStr = "    ##     ##  ## ### ### ##       ##  ## ##  ## ##    ##  ##     "
-	moveCursor(position{GOPosX, GOPosY - 9})
-	draw(GOStr)
-	GOStr = fmt.Sprintf("%v  ## ### ###### ## # ## ####     ##  ## ##  ## ####  #####      %v", manFoot, cactusSeg)
-	moveCursor(position{GOPosX, GOPosY - 8})
-	draw(GOStr)
-	GOStr = fmt.Sprintf("%v  ##  ## ##  ## ##   ## ##       ##  ##  ####  ##    ##  ##  %v  %v", manBody, cactusSeg, cactusSeg)
-	moveCursor(position{GOPosX, GOPosY - 7})
-	draw(GOStr)
-	GOStr = fmt.Sprintf("%v   ####  ##  ## ##   ## #####     ####    ##   ##### ##  ##  %v  %v  %v", manFoot, cactusSeg, cactusSeg, cactusSeg)
-	moveCursor(position{GOPosX, GOPosY - 6})
-	draw(GOStr)
+	for i := 0; i < len(GOStr); i++ {
+		moveCursor(position{GOPosX, GOPosY - 10 + i})
+		draw(GOStr[i])
+	}
 
-	score := "score: " + strconv.Itoa(g.score) + "\n"
-	scorePos := g.maxX/2 - len(score)/2
-	moveCursor(position{scorePos, GOPosY - 4})
-	draw(score)
+	bigScore := getBigNum(g.score)
+	var bigScoreStrArr []string
+	var bigScoreStr string
+	for j := 0; j < 5; j++ {
+		bigScoreStr = ""
+		for i := range bigScore {
+			bigScoreStr += " " + bigScore[i][j]
+		}
+		bigScoreStrArr = append(bigScoreStrArr, bigScoreStr)
+	}
+	moveCursor(position{10, 10})
+	score := [5]string{
+		fmt.Sprintf(" ####   ####   ####  #####  #####        %v", bigScoreStrArr[0]),
+		fmt.Sprintf("##     ##  ## ##  ## ##  ## ##      ##   %v", bigScoreStrArr[1]),
+		fmt.Sprintf(" ####  ##     ##  ## #####  ####         %v", bigScoreStrArr[2]),
+		fmt.Sprintf("    ## ##  ## ##  ## ##  ## ##      ##   %v", bigScoreStrArr[3]),
+		fmt.Sprintf(" ####   ####   ####  ##  ## #####        %v\n", bigScoreStrArr[4]),
+	}
+	scorePosX := g.maxX/2 - len(score[0])/2
+	for i := 0; i < len(score); i++ {
+		moveCursor(position{scorePosX, GOPosY - 4 + i})
+		draw(score[i])
+	}
 
 	render()
 
@@ -132,29 +143,39 @@ func (g *game) over() {
 }
 
 func (g game) NewGameScreen() {
-	var NGStr string
-	NGStr = "     ##   ## ##  ##     ####   ####  ##   ## #####      "
-	GOPosX := g.maxX/2 - len(NGStr)/2
-	GOPosY := g.maxY / 2
-	moveCursor(position{GOPosX, GOPosY - 10})
-	draw(NGStr)
-	NGStr = "     ### ###  ####     ##     ##  ## ### ### ##        "
-	moveCursor(position{GOPosX, GOPosY - 9})
-	draw(NGStr)
-	NGStr = fmt.Sprintf("%v   ## # ##   ##      ## ### ###### ## # ## ####      %v", manFoot, cactusSeg)
-	moveCursor(position{GOPosX, GOPosY - 8})
-	draw(NGStr)
-	NGStr = fmt.Sprintf("%v   ##   ##   ##      ##  ## ##  ## ##   ## ##     %v  %v", manBody, cactusSeg, cactusSeg)
-	moveCursor(position{GOPosX, GOPosY - 7})
-	draw(NGStr)
-	NGStr = fmt.Sprintf("%v   ##   ##   ##       ####  ##  ## ##   ## #####  %v  %v  %v", manFoot, cactusSeg, cactusSeg, cactusSeg)
-	moveCursor(position{GOPosX, GOPosY - 6})
-	draw(NGStr)
+	NGStr := [5]string{
+		"     ##   ## ##  ##     ####   ####  ##   ## #####      ",
+		"     ### ###  ####     ##     ##  ## ### ### ##        ",
+		fmt.Sprintf("%v   ## # ##   ##      ## ### ###### ## # ## ####      %v", manFoot, cactusSeg),
+		fmt.Sprintf("%v   ##   ##   ##      ##  ## ##  ## ##   ## ##     %v  %v", manBody, cactusSeg, cactusSeg),
+		fmt.Sprintf("%v   ##   ##   ##       ####  ##  ## ##   ## #####  %v  %v  %v", manFoot, cactusSeg, cactusSeg, cactusSeg),
+	}
+	NGPosX := g.maxX/2 - len(NGStr[0])/2
+	NGPosY := g.maxY / 2
+	for i := 0; i < len(NGStr); i++ {
+		moveCursor(position{NGPosX, NGPosY - 10 + i})
+		draw(NGStr[i])
+	}
 
-	score := "Press SPACE to start\n"
-	scorePos := g.maxX/2 - len(score)/2
-	moveCursor(position{scorePos, GOPosY - 4})
-	draw(score)
-
+	start := "Press SPACE to start\n"
+	scorePos := g.maxX/2 - len(start)/2
+	moveCursor(position{scorePos, NGPosY - 4})
+	draw(start)
 	render()
+}
+
+func (g game) pause() {
+	pause := [5]string{
+		"#####   ####  ##  ##  ####  #####",
+		"##  ## ##  ## ##  ## ##     ##",
+		"#####  ###### ##  ##  ####  ####",
+		"##     ##  ## ##  ##     ## ##",
+		"##     ##  ##  ####   ####  #####",
+	}
+	NGPosX := g.maxX/2 - len(pause[0])/2
+	NGPosY := g.maxY / 2
+	for i := 0; i < len(pause); i++ {
+		moveCursor(position{NGPosX, NGPosY - 10 + i})
+		draw(pause[i])
+	}
 }

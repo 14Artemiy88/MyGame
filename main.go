@@ -26,6 +26,7 @@ func main() {
 	N, footCounter, step := 0, 0, false
 	for {
 		if !game.started {
+			//game.pause()
 			continue
 		}
 		if footCounter == 8 {

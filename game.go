@@ -13,6 +13,7 @@ import (
 
 type game struct {
 	started bool
+	paused  bool
 	maxX    int
 	maxY    int
 	score   int
@@ -68,11 +69,12 @@ func (g *game) listenForKeyPress() {
 		// we ignore the escape character [
 		switch char {
 		case ' ':
-			g.started = !g.started
+			g.paused = !g.paused
+			g.started = true
 		case 'A':
 			g.man.direction = up
-		case 'B':
-			g.man.direction = down
+		//case 'B':
+		//	g.man.direction = down
 		case 'C':
 			g.man.direction = right
 		case 'D':
@@ -114,7 +116,7 @@ func (g *game) checkScore() {
 }
 func (g *game) over() {
 	showCursor()
-	clear()
+	//clear()
 
 	GOStr := [5]string{
 		"     ####   ####  ##   ## #####     ####  ##  ## ##### #####      ",
@@ -135,7 +137,7 @@ func (g *game) over() {
 			fgRgb(0, 200, 0, cactus1Stages[1][0]+cactus1Stages[0][0]),
 		),
 	}
-	g.drawBigTest(GOStr, 10)
+	drawBigTest(GOStr, 10, g.maxX, g.maxY)
 
 	bigScore := getBigNum(g.score)
 	var bigScoreStrArr []string
@@ -154,7 +156,7 @@ func (g *game) over() {
 		fmt.Sprintf("    ## ##  ## ##  ## ##  ## ##      ##   %v", bigScoreStrArr[3]),
 		fmt.Sprintf(" ####   ####   ####  ##  ## #####        %v\n", bigScoreStrArr[4]),
 	}
-	g.drawBigTest(score, 4)
+	drawBigTest(score, 4, g.maxX, g.maxY)
 
 	render()
 
@@ -184,12 +186,13 @@ func (g game) NewGameScreen() {
 			fgRgb(0, 200, 0, cactus1Stages[1][0]+cactus1Stages[0][0]),
 		),
 	}
-	g.drawBigTest(NGStr, 10)
+	drawBigTest(NGStr, 10, g.maxX, g.maxY)
 
-	start := "Press SPACE to start\n"
-	scorePos := g.maxX/2 - len(start)/2
-	moveCursor(position{scorePos, g.maxY/2 - 4})
-	draw(start)
+	drawByCenter("↑ - Jump", g.maxX, g.maxY/2-4)
+	drawByCenter("→ - Right", g.maxX, g.maxY/2-3)
+	drawByCenter("← - Left", g.maxX, g.maxY/2-2)
+	drawByCenter("Press SPACE to start\n", g.maxX, g.maxY/2)
+
 	render()
 }
 
@@ -201,14 +204,5 @@ func (g game) pause() {
 		"##     ##  ## ##  ##     ## ##",
 		"##     ##  ##  ####   ####  #####",
 	}
-	g.drawBigTest(pause, 10)
-}
-
-func (g game) drawBigTest(text [5]string, height int) {
-	NGPosX := g.maxX/2 - len(text[0])/2
-	NGPosY := g.maxY / 2
-	for i := 0; i < len(text); i++ {
-		moveCursor(position{NGPosX, NGPosY - height + i})
-		draw(text[i])
-	}
+	drawBigTest(pause, 10, g.maxX, g.maxY)
 }

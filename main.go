@@ -24,8 +24,11 @@ func main() {
 
 	N, footCounter, step := 0, 0, false
 	for {
+		if game.started && game.paused {
+			game.pause()
+			continue
+		}
 		if !game.started {
-			//game.pause()
 			continue
 		}
 		if footCounter == 8 {
@@ -70,6 +73,7 @@ func newGame() *game {
 
 	game := &game{
 		started: false,
+		paused:  true,
 		score:   0,
 		maxX:    maxX,
 		maxY:    maxY,

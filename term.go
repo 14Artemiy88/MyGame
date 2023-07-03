@@ -55,3 +55,17 @@ func getSize() (int, int) {
 
 	return width, height
 }
+func drawByCenter(text string, maxX int, height int) {
+	textPos := maxX/2 - len(text)/2
+	moveCursor(position{textPos, height})
+	draw(text)
+}
+
+func drawBigTest(text [5]string, height int, maxX int, maxY int) {
+	NGPosX := maxX/2 - len(text[0])/2
+	NGPosY := maxY / 2
+	for i := 0; i < len(text); i++ {
+		moveCursor(position{NGPosX, NGPosY - height + i})
+		draw(text[i])
+	}
+}

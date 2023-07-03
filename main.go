@@ -2,7 +2,6 @@ package main
 
 import (
 	"math/rand"
-	"time"
 )
 
 type position [2]int
@@ -48,7 +47,15 @@ func main() {
 		}
 
 		if N > 10 && rand.Intn(10) == 9 {
-			game.cactus = append(game.cactus, newCactus(position{game.maxX, game.maxY}))
+			height := rand.Intn(4)
+			switch height {
+			case 3:
+				game.newCactus(cactus3Stages, height, 3)
+			case 2:
+				game.newCactus(cactus2Stages, height, 3)
+			case 1:
+				game.newCactus(cactus1Stages, height, 2)
+			}
 			N = 0
 		}
 
@@ -59,7 +66,6 @@ func main() {
 }
 
 func newGame() *game {
-	rand.Seed(time.Now().UnixNano())
 	maxX, maxY := getSize()
 
 	game := &game{
@@ -69,24 +75,16 @@ func newGame() *game {
 		maxY:    maxY,
 		speed:   startSpeed,
 		dino:    newDino(position{10, maxY}),
-		cactus:  append([]*cactus{}, newCactus(position{maxX, maxY})),
+		cactus:  []*cactus{},
 	}
 
 	return game
 }
 
-func newDino(pos position) *dino {
-	return &dino{
+func newDino(pos position) *man {
+	return &man{
 		position:  pos,
 		direction: stay,
 		foots:     steps[1],
-	}
-}
-
-func newCactus(pos position) *cactus {
-	return &cactus{
-		position: pos,
-		height:   rand.Intn(3),
-		width:    rand.Intn(3),
 	}
 }

@@ -1,6 +1,6 @@
 package main
 
-type dino struct {
+type man struct {
 	position      position
 	direction     direction
 	jumpIteration int
@@ -17,7 +17,7 @@ var manLeft = fgRgb(200, 200, 0, "⡎⡇")
 var manRight = fgRgb(200, 200, 0, "⢸⢱")
 var steps = [3]string{manLeft, manRight}
 
-func (d dino) draw() {
+func (d man) draw() {
 	moveCursor(d.position)
 	draw(fgRgb(200, 200, 0, d.foots))
 	moveCursor([2]int{d.position[0], d.position[1] - 1})
@@ -26,7 +26,7 @@ func (d dino) draw() {
 	draw(manHead)
 }
 
-func (d *dino) move(maxX int, maxY int, step bool) {
+func (d *man) move(maxX int, maxY int, step bool) {
 	if step {
 		d.foots = steps[1]
 	} else {
@@ -57,26 +57,26 @@ func (d *dino) move(maxX int, maxY int, step bool) {
 		d.direction = stay
 	}
 }
-func (d *dino) moveUp() {
+func (d *man) moveUp() {
 	d.position[1]--
 }
-func (d *dino) moveDown(maxY int) {
+func (d *man) moveDown(maxY int) {
 	if d.position[1] < maxY {
 		d.position[1]++
 	}
 }
-func (d *dino) moveRight(maxX int) {
+func (d *man) moveRight(maxX int) {
 	if d.position[0] < maxX {
 		d.position[0]++
 	}
 }
-func (d *dino) moveLeft() {
+func (d *man) moveLeft() {
 	if d.position[0] > 0 {
 		d.position[0]--
 	}
 }
 
-func (d dino) checkAssOnCactus(c *cactus) bool {
+func (d man) checkAssOnCactus(c *cactus) bool {
 	return d.position[0] == c.position[0] &&
 		d.position[1] >= c.position[1]-c.height
 }

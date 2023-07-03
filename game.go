@@ -17,14 +17,14 @@ type game struct {
 	maxY    int
 	score   int
 	speed   time.Duration
-	dino    *dino
+	dino    *man
 	cactus  []*cactus
 }
 
 const startSpeed = 50
-const scoreStep = 10
+const scoreStep = 30
 const speedStep = 5
-const speedUpLimit = 40
+const speedUpLimit = 120
 
 func (g *game) draw() {
 	clear()
@@ -44,17 +44,22 @@ func (g *game) draw() {
 }
 
 func (g *game) listenForKeyPress() {
-	tty, err := tty.Open()
+	t, err := tty.Open()
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer tty.Close()
+	defer func(t *tty.TTY) {
+		err := t.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(t)
 
 	for {
 		if g.dino.direction != stay {
 			continue
 		}
-		char, err := tty.ReadRune()
+		char, err := t.ReadRune()
 		if err != nil {
 			panic(err)
 		}
@@ -90,6 +95,18 @@ func (g *game) beforeGame() {
 		}
 	}()
 }
+
+func (g *game) newCactus(cactusStages [][]string, height int, width int) {
+	for i := 0; i < width; i++ {
+		cactusPart := &cactus{
+			stages:   cactusStages[i],
+			height:   height,
+			position: position{g.maxX - i, g.maxY},
+		}
+		g.cactus = append(g.cactus, cactusPart)
+	}
+}
+
 func (g *game) checkScore() {
 	if g.score <= speedUpLimit && g.score%scoreStep == 0 {
 		g.speed -= speedStep
@@ -102,16 +119,23 @@ func (g *game) over() {
 	GOStr := [5]string{
 		"     ####   ####  ##   ## #####     ####  ##  ## ##### #####      ",
 		"    ##     ##  ## ### ### ##       ##  ## ##  ## ##    ##  ##     ",
-		fmt.Sprintf("%v  ## ### ###### ## # ## ####     ##  ## ##  ## ####  #####      %v", manFoot, cactusSeg),
-		fmt.Sprintf("%v  ##  ## ##  ## ##   ## ##       ##  ##  ####  ##    ##  ##  %v  %v", manBody, cactusSeg, cactusSeg),
-		fmt.Sprintf("%v   ####  ##  ## ##   ## #####     ####    ##   ##### ##  ##  %v  %v  %v", manFoot, cactusSeg, cactusSeg, cactusSeg),
+		fmt.Sprintf("%v  ## ### ###### ## # ## ####     ##  ## ##  ## ####  #####   %v",
+			manFoot,
+			fgRgb(0, 200, 0, cactus3Stages[2][2]+cactus3Stages[1][2]+cactus3Stages[0][2]),
+		),
+		fmt.Sprintf("%v  ##  ## ##  ## ##   ## ##       ##  ##  ####  ##    ##  ##  %v  %v",
+			manBody,
+			fgRgb(0, 200, 0, cactus3Stages[2][1]+cactus3Stages[1][1]+cactus3Stages[0][1]),
+			fgRgb(0, 200, 0, cactus2Stages[2][1]+cactus2Stages[1][1]+cactus2Stages[0][1]),
+		),
+		fmt.Sprintf("%v   ####  ##  ## ##   ## #####     ####    ##   ##### ##  ##  %v  %v  %v",
+			manFoot,
+			fgRgb(0, 200, 0, cactus3Stages[2][0]+cactus3Stages[1][0]+cactus3Stages[0][0]),
+			fgRgb(0, 200, 0, cactus2Stages[2][0]+cactus2Stages[1][0]+cactus2Stages[0][0]),
+			fgRgb(0, 200, 0, cactus1Stages[1][0]+cactus1Stages[0][0]),
+		),
 	}
-	GOPosX := g.maxX/2 - len(GOStr[0])/2
-	GOPosY := g.maxY / 2
-	for i := 0; i < len(GOStr); i++ {
-		moveCursor(position{GOPosX, GOPosY - 10 + i})
-		draw(GOStr[i])
-	}
+	g.drawBigTest(GOStr, 10)
 
 	bigScore := getBigNum(g.score)
 	var bigScoreStrArr []string
@@ -123,7 +147,6 @@ func (g *game) over() {
 		}
 		bigScoreStrArr = append(bigScoreStrArr, bigScoreStr)
 	}
-	moveCursor(position{10, 10})
 	score := [5]string{
 		fmt.Sprintf(" ####   ####   ####  #####  #####        %v", bigScoreStrArr[0]),
 		fmt.Sprintf("##     ##  ## ##  ## ##  ## ##      ##   %v", bigScoreStrArr[1]),
@@ -131,11 +154,8 @@ func (g *game) over() {
 		fmt.Sprintf("    ## ##  ## ##  ## ##  ## ##      ##   %v", bigScoreStrArr[3]),
 		fmt.Sprintf(" ####   ####   ####  ##  ## #####        %v\n", bigScoreStrArr[4]),
 	}
-	scorePosX := g.maxX/2 - len(score[0])/2
-	for i := 0; i < len(score); i++ {
-		moveCursor(position{scorePosX, GOPosY - 4 + i})
-		draw(score[i])
-	}
+
+	g.drawBigTest(score, 4)
 
 	render()
 
@@ -146,20 +166,30 @@ func (g game) NewGameScreen() {
 	NGStr := [5]string{
 		"     ##   ## ##  ##     ####   ####  ##   ## #####      ",
 		"     ### ###  ####     ##     ##  ## ### ### ##        ",
-		fmt.Sprintf("%v   ## # ##   ##      ## ### ###### ## # ## ####      %v", manFoot, cactusSeg),
-		fmt.Sprintf("%v   ##   ##   ##      ##  ## ##  ## ##   ## ##     %v  %v", manBody, cactusSeg, cactusSeg),
-		fmt.Sprintf("%v   ##   ##   ##       ####  ##  ## ##   ## #####  %v  %v  %v", manFoot, cactusSeg, cactusSeg, cactusSeg),
+		fmt.Sprintf(
+			"%v   ## # ##   ##      ## ### ###### ## # ## ####   %v",
+			manFoot,
+			fgRgb(0, 200, 0, cactus3Stages[2][2]+cactus3Stages[1][2]+cactus3Stages[0][2]),
+		),
+		fmt.Sprintf(
+			"%v   ##   ##   ##      ##  ## ##  ## ##   ## ##     %v  %v",
+			manBody,
+			fgRgb(0, 200, 0, cactus3Stages[2][1]+cactus3Stages[1][1]+cactus3Stages[0][1]),
+			fgRgb(0, 200, 0, cactus2Stages[2][1]+cactus2Stages[1][1]+cactus2Stages[0][1]),
+		),
+		fmt.Sprintf(
+			"%v   ##   ##   ##       ####  ##  ## ##   ## #####  %v  %v  %v",
+			manFoot,
+			fgRgb(0, 200, 0, cactus3Stages[2][0]+cactus3Stages[1][0]+cactus3Stages[0][0]),
+			fgRgb(0, 200, 0, cactus2Stages[2][0]+cactus2Stages[1][0]+cactus2Stages[0][0]),
+			fgRgb(0, 200, 0, cactus1Stages[1][0]+cactus1Stages[0][0]),
+		),
 	}
-	NGPosX := g.maxX/2 - len(NGStr[0])/2
-	NGPosY := g.maxY / 2
-	for i := 0; i < len(NGStr); i++ {
-		moveCursor(position{NGPosX, NGPosY - 10 + i})
-		draw(NGStr[i])
-	}
+	g.drawBigTest(NGStr, 10)
 
 	start := "Press SPACE to start\n"
 	scorePos := g.maxX/2 - len(start)/2
-	moveCursor(position{scorePos, NGPosY - 4})
+	moveCursor(position{scorePos, g.maxY/2 - 4})
 	draw(start)
 	render()
 }
@@ -172,10 +202,14 @@ func (g game) pause() {
 		"##     ##  ## ##  ##     ## ##",
 		"##     ##  ##  ####   ####  #####",
 	}
-	NGPosX := g.maxX/2 - len(pause[0])/2
+	g.drawBigTest(pause, 10)
+}
+
+func (g game) drawBigTest(text [5]string, height int) {
+	NGPosX := g.maxX/2 - len(text[0])/2
 	NGPosY := g.maxY / 2
-	for i := 0; i < len(pause); i++ {
-		moveCursor(position{NGPosX, NGPosY - 10 + i})
-		draw(pause[i])
+	for i := 0; i < len(text); i++ {
+		moveCursor(position{NGPosX, NGPosY - height + i})
+		draw(text[i])
 	}
 }

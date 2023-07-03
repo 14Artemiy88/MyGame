@@ -32,10 +32,10 @@ func main() {
 			footCounter = 0
 			step = !step
 		}
-		game.dino.move(game.maxX, game.maxY, step)
+		game.man.move(game.maxX, game.maxY, step)
 
 		for _, c := range game.cactus {
-			if game.dino.checkAssOnCactus(c) {
+			if game.man.checkAssOnCactus(c) {
 				game.over()
 			}
 			c.move()
@@ -74,7 +74,7 @@ func newGame() *game {
 		maxX:    maxX,
 		maxY:    maxY,
 		speed:   startSpeed,
-		dino:    newDino(position{10, maxY}),
+		man:     newDino(position{10, maxY}),
 		cactus:  []*cactus{},
 	}
 

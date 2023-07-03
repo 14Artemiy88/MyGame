@@ -17,7 +17,7 @@ type game struct {
 	maxY    int
 	score   int
 	speed   time.Duration
-	dino    *man
+	man     *man
 	cactus  []*cactus
 }
 
@@ -34,7 +34,7 @@ func (g *game) draw() {
 	moveCursor(position{statusXPos, 0})
 	draw(status)
 
-	g.dino.draw()
+	g.man.draw()
 	for _, c := range g.cactus {
 		c.draw()
 	}
@@ -56,7 +56,7 @@ func (g *game) listenForKeyPress() {
 	}(t)
 
 	for {
-		if g.dino.direction != stay {
+		if g.man.direction != stay {
 			continue
 		}
 		char, err := t.ReadRune()
@@ -70,13 +70,13 @@ func (g *game) listenForKeyPress() {
 		case ' ':
 			g.started = !g.started
 		case 'A':
-			g.dino.direction = up
+			g.man.direction = up
 		case 'B':
-			g.dino.direction = down
+			g.man.direction = down
 		case 'C':
-			g.dino.direction = right
+			g.man.direction = right
 		case 'D':
-			g.dino.direction = left
+			g.man.direction = left
 		}
 	}
 }
@@ -154,7 +154,6 @@ func (g *game) over() {
 		fmt.Sprintf("    ## ##  ## ##  ## ##  ## ##      ##   %v", bigScoreStrArr[3]),
 		fmt.Sprintf(" ####   ####   ####  ##  ## #####        %v\n", bigScoreStrArr[4]),
 	}
-
 	g.drawBigTest(score, 4)
 
 	render()

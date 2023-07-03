@@ -27,7 +27,7 @@ const scoreStep = 30
 const speedStep = 5
 const speedUpLimit = 120
 
-func (g *game) draw() {
+func (g *game) draw(isDead bool) {
 	clear()
 
 	status := "score: " + strconv.Itoa(g.score)
@@ -35,10 +35,10 @@ func (g *game) draw() {
 	moveCursor(position{statusXPos, 0})
 	draw(status)
 
-	g.man.draw()
 	for _, c := range g.cactus {
 		c.draw()
 	}
+	g.man.draw(isDead)
 
 	render()
 	time.Sleep(time.Millisecond * g.speed)
@@ -116,7 +116,7 @@ func (g *game) checkScore() {
 }
 func (g *game) over() {
 	showCursor()
-	//clear()
+	clear()
 
 	GOStr := [5]string{
 		"     ####   ####  ##   ## #####     ####  ##  ## ##### #####      ",

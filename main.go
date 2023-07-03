@@ -2,6 +2,7 @@ package main
 
 import (
 	"math/rand"
+	"time"
 )
 
 type position [2]int
@@ -39,6 +40,8 @@ func main() {
 
 		for _, c := range game.cactus {
 			if game.man.checkAssOnCactus(c) {
+				game.draw(true)
+				time.Sleep(time.Millisecond * 1000)
 				game.over()
 			}
 			c.move()
@@ -62,7 +65,7 @@ func main() {
 			N = 0
 		}
 
-		game.draw()
+		game.draw(false)
 		N++
 		footCounter++
 	}

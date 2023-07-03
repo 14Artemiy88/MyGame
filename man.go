@@ -17,13 +17,26 @@ var manLeft = fgRgb(200, 200, 0, "⡎⡇")
 var manRight = fgRgb(200, 200, 0, "⢸⢱")
 var steps = [3]string{manLeft, manRight}
 
-func (d man) draw() {
+func (d man) draw(isDead bool) {
+	if isDead {
+		d.drawDeadman()
+	} else {
+		moveCursor(d.position)
+		draw(fgRgb(200, 200, 0, d.foots))
+		moveCursor([2]int{d.position[0], d.position[1] - 1})
+		draw(manBody)
+		moveCursor([2]int{d.position[0], d.position[1] - 2})
+		draw(manHead)
+	}
+}
+
+func (d man) drawDeadman() {
 	moveCursor(d.position)
-	draw(fgRgb(200, 200, 0, d.foots))
+	draw(fgRgb(200, 0, 0, d.foots))
 	moveCursor([2]int{d.position[0], d.position[1] - 1})
-	draw(manBody)
+	draw(fgRgb(200, 0, 0, "⢺⡗"))
 	moveCursor([2]int{d.position[0], d.position[1] - 2})
-	draw(manHead)
+	draw(fgRgb(200, 0, 0, "⢠⡄"))
 }
 
 func (d *man) move(maxX int, maxY int, step bool) {

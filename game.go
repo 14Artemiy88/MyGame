@@ -20,6 +20,7 @@ type game struct {
 	speed   time.Duration
 	man     *man
 	cactus  []*cactus
+	star    [starsCount]star
 }
 
 const startSpeed = 50
@@ -29,6 +30,11 @@ const speedUpLimit = 120
 
 func (g *game) draw(isDead bool) {
 	clear()
+
+	for _, s := range g.star {
+		moveCursor(s.position)
+		draw("*")
+	}
 
 	status := "score: " + strconv.Itoa(g.score)
 	statusXPos := g.maxX/2 - len(status)/2

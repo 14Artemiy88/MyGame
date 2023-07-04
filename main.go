@@ -32,6 +32,7 @@ func main() {
 		if !game.started {
 			continue
 		}
+
 		if footCounter == 8 {
 			footCounter = 0
 			step = !step
@@ -92,6 +93,7 @@ func newGame() *game {
 		speed:   startSpeed,
 		man:     newMan(position{10, maxY}),
 		cactus:  []*cactus{},
+		star:    newStars(maxX, maxY/2),
 	}
 
 	return game
@@ -103,4 +105,15 @@ func newMan(pos position) *man {
 		direction: stay,
 		foots:     steps[1],
 	}
+}
+
+func newStars(maxX int, maxY int) [starsCount]star {
+	var stars []star
+	for i := 0; i <= starsCount; i++ {
+		x := rand.Intn(maxX)
+		y := rand.Intn(maxY)
+		stars = append(stars, star{position: position{x, y}})
+	}
+
+	return [starsCount]star(stars)
 }

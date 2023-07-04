@@ -191,11 +191,7 @@ func (g game) NewGameScreen() {
 	}
 	drawBigTest(NGStr, 10, g.maxX, g.maxY)
 
-	drawByCenter("↑ - Jump", g.maxX, g.maxY/2-4)
-	drawByCenter("→ - Right", g.maxX, g.maxY/2-3)
-	drawByCenter("← - Left", g.maxX, g.maxY/2-2)
-	drawByCenter("↓ - piu-piu", g.maxX, g.maxY/2-1)
-	drawByCenter("Press SPACE to start\n", g.maxX, g.maxY/2+1)
+	g.drawGameKeys(g.maxY/2 - 4)
 
 	render()
 }
@@ -209,4 +205,14 @@ func (g game) pause() {
 		"##     ##  ##  ####   ####  #####",
 	}
 	drawBigTest(pause, 10, g.maxX, g.maxY)
+	g.drawGameKeys(g.maxY/2 - 4)
+}
+
+func (g game) drawGameKeys(height int) {
+	drawByCenter("↑ - Jump", g.maxX, height)
+	drawByCenter("→ - Right", g.maxX, height+1)
+	drawByCenter("← - Left", g.maxX, height+2)
+	drawByCenter("← - Left", g.maxX, height+2)
+	drawByCenter("space - Pause", g.maxX, height+3)
+	drawByCenter("Press SPACE to start\n", g.maxX, height+5)
 }

@@ -41,7 +41,9 @@ func main() {
 			piu.move()
 			needDelete := piu.checkCactus(game.cactus)
 			if needDelete || piu.position[0] > game.maxX {
-				game.man.delPiu(key)
+				if len(game.man.piu) > key {
+					game.man.delPiu(key)
+				}
 			}
 		}
 
@@ -88,14 +90,14 @@ func newGame() *game {
 		maxX:    maxX,
 		maxY:    maxY,
 		speed:   startSpeed,
-		man:     newDino(position{10, maxY}),
+		man:     newMan(position{10, maxY}),
 		cactus:  []*cactus{},
 	}
 
 	return game
 }
 
-func newDino(pos position) *man {
+func newMan(pos position) *man {
 	return &man{
 		position:  pos,
 		direction: stay,

@@ -93,7 +93,7 @@ func newGame() *game {
 		speed:   startSpeed,
 		man:     newMan(position{10, maxY}),
 		cactus:  []*cactus{},
-		star:    newStars(maxX, maxY/2),
+		star:    newStars(maxX, int(float32(maxY)/1.3)),
 	}
 
 	return game

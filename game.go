@@ -157,7 +157,7 @@ func (g *game) over() {
 		fmt.Sprintf("##     ##  ## ##  ## ##  ## ##      ##   %v", bigScoreStrArr[1]),
 		fmt.Sprintf(" ####  ##     ##  ## #####  ####         %v", bigScoreStrArr[2]),
 		fmt.Sprintf("    ## ##  ## ##  ## ##  ## ##      ##   %v", bigScoreStrArr[3]),
-		fmt.Sprintf(" ####   ####   ####  ##  ## #####        %v\n", bigScoreStrArr[4]),
+		fmt.Sprintf(" ####   ####   ####  ##  ## #####        %v\n\n\n", bigScoreStrArr[4]),
 	}
 	drawBigTest(score, 4, g.maxX, g.maxY)
 

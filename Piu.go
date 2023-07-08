@@ -10,10 +10,8 @@ func (p *piu) move() {
 	p.position[0]++
 }
 func (p *piu) draw() {
-
 	moveCursor(p.position)
 	draw(fgRgb(255, 0, 0, symbol))
-
 }
 
 func (p *piu) checkCactus(cactuses []*cactus) bool {

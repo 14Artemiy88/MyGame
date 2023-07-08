@@ -96,7 +96,7 @@ func (m man) checkAssOnCactus(c *cactus) bool {
 }
 
 func (m *man) piuPiu() {
-	m.piu = append(m.piu, &piu{position: [2]int{m.position[0] + 1, m.position[1] - 1}})
+	m.piu = append(m.piu, &piu{position: [2]int{m.position[0] + 2, m.position[1] - 1}})
 }
 
 func (m *man) delPiu(key int) {

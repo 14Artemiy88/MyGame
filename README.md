@@ -15,7 +15,7 @@ export PATH=$PATH:$(go env GOPATH)/bin
 ```
 and then
 ```bash
-go install github.com/14Artemiy88/termPaint@latest
+go install github.com/14Artemiy88/MyGame@latest
 ```
 
 ## Usage

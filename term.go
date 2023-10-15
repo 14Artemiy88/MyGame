@@ -27,20 +27,12 @@ func clear() {
 	fmt.Fprint(screen, "\033[2J")
 }
 
-func bgRgb(r int, g int, b int) {
-	fmt.Fprintf(screen, "\033[48;2;%d;%d;%dm", r, g, b)
-}
-
 func fgRgb(r int, g int, b int, symbol string) string {
 	return "\033[38;2;" + strconv.Itoa(r) + ";" + strconv.Itoa(g) + ";" + strconv.Itoa(b) + "m" + symbol + "\033[0m"
 }
 
 func draw(str any) {
 	fmt.Fprint(screen, str)
-}
-
-func drawF(str string, params ...string) {
-	fmt.Fprintf(screen, str, params)
 }
 
 func render() {
